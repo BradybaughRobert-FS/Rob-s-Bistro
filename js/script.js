@@ -1,6 +1,9 @@
 // Define the Employee class
 class Employee {
+    static idCounter = 1; // Static counter to generate unique IDs
+
     constructor(name, age) {
+        this.id = Employee.idCounter++;
         this.name = name;
         this.age = age;
         this.annualSalary = 0;
@@ -62,7 +65,6 @@ class Main {
     // Method to add an employee to the table
     addEmployee() {
         const input = prompt("Enter employee information (name, age, hrs/wk, pay rate):");
-        if (!input) return; // Handle cancel button click
         const [name, age, hours, payRate] = input.split(",").map(item => item.trim());
         const parsedAge = parseInt(age);
         const parsedHours = parseInt(hours);
@@ -82,15 +84,18 @@ class Main {
 
         employee.calculatePay();
         this.employees.push(employee);
-        console.log("Employee added successfully.");
+        console.clear();
+        console.log("Employee added successfully:");
+        console.log("ID\tName\tSalary\tHrs\tPay\tFT/PT");
+        console.log(`${employee.id}\t${employee.name}\t${employee.annualSalary}\t${employee.hours}\t${employee.payRate}\t${employee.employeeType}`);
+        console.log("Input Details:");
         console.log(`Name: ${name}, Age: ${parsedAge}, Hours/week: ${parsedHours}, Pay Rate: ${parsedPayRate}`);
+        prompt("Press Enter to continue...");
     }
 
     // Method to remove an employee from the table
     removeEmployee() {
         const name = prompt("Enter employee name to remove:");
-        if (!name) return; // Handle cancel button click
-
         const index = this.employees.findIndex(employee => employee.name === name);
         
         if (index !== -1) {
@@ -99,36 +104,34 @@ class Main {
         } else {
             console.log("Employee not found.");
         }
+        prompt("Press Enter to continue...");
     }
 
     // Method to edit an employee's pay rate
     editEmployee() {
         const name = prompt("Enter employee name to edit:");
-        if (!name) return; // Handle cancel button click
-
         const employee = this.employees.find(employee => employee.name === name);
 
         if (employee) {
             const newPayRate = parseFloat(prompt("Enter new pay rate:"));
-            if (!isNaN(newPayRate)) {
-                employee.payRate = newPayRate;
-                employee.calculatePay();
-                console.log("Employee pay rate updated successfully.");
-            } else {
-                console.log("Invalid input. Please enter a valid pay rate.");
-            }
+            employee.payRate = newPayRate;
+            employee.calculatePay();
+            console.log("Employee pay rate updated successfully.");
         } else {
             console.log("Employee not found.");
         }
+        prompt("Press Enter to continue...");
     }
 
     // Method to display all employees in the table
     displayEmployees() {
+        console.clear();
         console.log("Employee List:");
-        console.log("Name\tAge\tType\t\tPay Rate\tHours\tAnnual Salary");
+        console.log("ID\tName\tSalary\tHrs\tPay\tFT/PT");
         this.employees.forEach(employee => {
-            console.log(`${employee.name}\t${employee.age}\t${employee.employeeType}\t${employee.payRate}\t${employee.hours}\t${employee.annualSalary}`);
+            console.log(`${employee.id}\t${employee.name}\t${employee.annualSalary}\t${employee.hours}\t${employee.payRate}\t${employee.employeeType}`);
         });
+        prompt("Press Enter to continue...");
     }
 
     // Method to start the main menu loop
@@ -157,7 +160,7 @@ class Main {
                 default:
                     console.log("Invalid choice. Please choose from 1 to 5.");
             }
-        } while (choice !== "5" && choice !== null); // Added condition to exit loop when choice is null (cancel button clicked)
+        } while (choice !== "5");
     }
 }
 
