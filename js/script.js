@@ -99,7 +99,7 @@ addEmployee() {
   
   // Employee Class
   class Employee {
-    constructor(name, age, payRate) {
+    constructor(n, a, pR) {
       this.name = name;
       this.age = age;
       this.payRate = payRate;
@@ -167,7 +167,7 @@ addEmployee() {
       );
   
       if (choice == -null) {
-        console.log("Exiting the program. Goodbye!");
+        console.log("You've been promoted to customer. Goodbye!");
         break;
       }
   
@@ -186,7 +186,7 @@ addEmployee() {
           break;
         case "exit":
           exitFlag = true;
-          console.log("Exiting the program. Goodbye!");
+          console.log("You've been promoted to customer. Goodbye!");
           break;
         default:
           console.log("Invalid choice. Please enter a number between 1 and 4.");
