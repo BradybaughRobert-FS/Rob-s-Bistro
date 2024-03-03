@@ -1,169 +1,195 @@
-// Define the Employee class
-class Employee {
-    static idCounter = 1; // Static counter to generate unique IDs
-
-    constructor(name, age) {
-        this.id = Employee.idCounter++;
-        this.name = name;
-        this.age = age;
-        this.annualSalary = 0;
-    }
-}
-
-// Define the PartTime class extending Employee
-class PartTime extends Employee {
-    constructor(name, age, payRate, hours) {
-        super(name, age);
-        this.payRate = payRate;
-        this.hours = hours;
-        this.employeeType = "Part Time";
-    }
-
-    // Method to calculate annual pay for a part-time employee
-    calculatePay() {
-        // Assuming 52 weeks in a year
-        this.annualSalary = this.payRate * this.hours * 52;
-    }
-}
-
-// Define the Manager class extending Employee
-class Manager extends Employee {
-    constructor(name, age, payRate, hours) {
-        super(name, age);
-        this.payRate = payRate;
-        this.hours = hours;
-        this.employeeType = "Manager";
-    }
-
-    // Method to calculate annual pay for a manager
-    calculatePay() {
-        // Assuming 52 weeks in a year
-        const standardHours = 40;
-        const overtimeRate = 1.5;
-        const overtimeHours = Math.max(this.hours - standardHours, 0);
-        this.annualSalary = ((standardHours * this.payRate) + (overtimeHours * overtimeRate * this.payRate)) * 52 - 1000;
-    }
-}
-
-// Define the Main class
+// Main Class
 class Main {
     constructor() {
-        this.employees = [];
+      // Hardcoded initial employees
+      this.employees = [
+        new Manager("Atticus", 25, 12, 40),
+        new PartTime("Felecity", 17, 7, 35),
+        new Manager("Oliver", 30, 20, 45),
+      ];
     }
-
-    // Method to display main menu options
+  
+    // Main Menu
     displayMenu() {
-        console.clear(); // Clear the console before displaying the menu
-        console.log("Main Menu:");
-        console.log("1. Add Employee");
-        console.log("2. Remove Employee");
-        console.log("3. Edit Employee");
-        console.log("4. Display Employees");
-        console.log("5. Exit");
+      console.log("1. Add Employee");
+      console.log("2. Remove Employee");
+      console.log("3. Edit Employee");
+      console.log("4. Display Employees");
+    }
+  
+    // Add Employee
+addEmployee() {
+    const input = prompt("Enter employee information (name, age, pay rate, hours per week):");
+    const [n, a, pH, h] = input.split(",").map(item => item.trim());
+    const parsedAge = parseInt(a);
+    const parsedHours = parseInt(h);
+    const parsedPayRate = parseFloat(pH);
+
+    if (isNaN(parsedAge) || isNaN(parsedHours) || isNaN(parsedPayRate)) {
+        console.log("Invalid input. Please enter valid information.");
+        return;
     }
 
-    // Method to add an employee to the table
-    addEmployee() {
-        const input = prompt("Enter employee information (name, age, hrs/wk, pay rate):");
-        const [name, age, hours, payRate] = input.split(",").map(item => item.trim());
-        const parsedAge = parseInt(age);
-        const parsedHours = parseInt(hours);
-        const parsedPayRate = parseFloat(payRate);
-
-        if (isNaN(parsedAge) || isNaN(parsedHours) || isNaN(parsedPayRate)) {
-            console.log("Invalid input. Please enter valid information.");
-            return;
-        }
-
-        let employee;
-        if (parsedHours >= 40) {
-            employee = new Manager(name, parsedAge, parsedPayRate, parsedHours);
-        } else {
-            employee = new PartTime(name, parsedAge, parsedPayRate, parsedHours);
-        }
-
-        employee.calculatePay();
-        this.employees.push(employee);
-        console.clear();
-        console.log("Employee added successfully:");
-        console.log("ID\tName\tSalary\tHrs\tPay\tFT/PT");
-        console.log(`${employee.id}\t${employee.name}\t${employee.annualSalary}\t${employee.hours}\t${employee.payRate}\t${employee.employeeType}`);
-        console.log("Input Details:");
-        console.log(`Name: ${name}, Age: ${parsedAge}, Hours/week: ${parsedHours}, Pay Rate: ${parsedPayRate}`);
-        prompt("Press Enter to continue...");
+    let employee;
+    if (parsedHours >= 40) {
+        employee = new Manager(n, parsedAge, parsedPayRate, parsedHours);
+    } else {
+        employee = new PartTime(n, parsedAge, parsedPayRate, parsedHours);
     }
 
-    // Method to remove an employee from the table
-    removeEmployee() {
-        const name = prompt("Enter employee name to remove:");
-        const index = this.employees.findIndex(employee => employee.name === name);
-        
-        if (index !== -1) {
-            this.employees.splice(index, 1);
-            console.log("Employee removed successfully.");
-        } else {
-            console.log("Employee not found.");
-        }
-        prompt("Press Enter to continue...");
-    }
-
-    // Method to edit an employee's pay rate
-    editEmployee() {
-        const name = prompt("Enter employee name to edit:");
-        const employee = this.employees.find(employee => employee.name === name);
-
-        if (employee) {
-            const newPayRate = parseFloat(prompt("Enter new pay rate:"));
-            employee.payRate = newPayRate;
-            employee.calculatePay();
-            console.log("Employee pay rate updated successfully.");
-        } else {
-            console.log("Employee not found.");
-        }
-        prompt("Press Enter to continue...");
-    }
-
-    // Method to display all employees in the table
-    displayEmployees() {
-        console.clear();
-        console.log("Employee List:");
-        console.log("ID\tName\tSalary\tHrs\tPay\tFT/PT");
-        this.employees.forEach(employee => {
-            console.log(`${employee.id}\t${employee.name}\t${employee.annualSalary}\t${employee.hours}\t${employee.payRate}\t${employee.employeeType}`);
-        });
-        prompt("Press Enter to continue...");
-    }
-
-    // Method to start the main menu loop
-    start() {
-        let choice;
-        do {
-            this.displayMenu();
-            choice = prompt("Main Menu:\n1. Add Employee\n2. Remove Employee\n3. Edit Employee\n4. Display Employees\n5. Exit");
-
-            switch (choice) {
-                case "1":
-                    this.addEmployee();
-                    break;
-                case "2":
-                    this.removeEmployee();
-                    break;
-                case "3":
-                    this.editEmployee();
-                    break;
-                case "4":
-                    this.displayEmployees();
-                    break;
-                case "5":
-                    console.log("Exiting the program...");
-                    break;
-                default:
-                    console.log("Invalid choice. Please choose from 1 to 5.");
-            }
-        } while (choice !== "5");
-    }
+    this.employees.push(employee);
+    console.clear();
+    console.log("Employee added successfully!");
+    this.displayEmployees();
 }
 
-// Instantiate the Main class and start the program
-const main = new Main();
-main.start();
+  
+    // Remove Employee
+    removeEmployee() {
+      console.log("Employee List:");
+      this.displayEmployees();
+  
+      const input = prompt("Enter employee number or name to remove:");
+  
+      // Check if input is a number
+      const index = isNaN(input)
+        ? this.employees.findIndex((e) => e.name === input)
+        : input - 1;
+  
+      if (index !== -1 && index < this.employees.length) {
+        this.employees.splice(index, 1);
+        console.clear();
+        console.log("Employee removed successfully!");
+        this.displayEmployees();
+      } else {
+        console.log("Invalid input. No employee removed.");
+      }
+    }
+  
+    // Edit Employee
+    editEmployee() {
+      console.log("Employee List:");
+      this.displayEmployees();
+  
+      const employeeNumber = prompt("Enter employee number to edit pay rate:");
+      const employee = this.employees[employeeNumber - 1];
+  
+      if (employee) {
+        const newPayRate = prompt(`Enter new pay rate for ${employee.name}:`);
+        employee.editPayRate(newPayRate);
+  
+        console.clear();
+        console.log("Employee pay rate updated successfully!");
+        this.displayEmployees();
+      } else {
+        console.log("Invalid employee number. No changes made.");
+      }
+    }
+  
+    // Display Employees
+    displayEmployees() {
+      console.log("Serenity Cafe");
+      console.log("ID\tName\tAge\tSalary\tHrs\tPay\tType");
+  
+      this.employees.forEach((employee, index) => {
+        console.log(`${index + 1}\t${employee.displayInfo()}`);
+      });
+    }
+  }
+  
+  // Employee Class
+  class Employee {
+    constructor(name, age, payRate) {
+      this.name = name;
+      this.age = age;
+      this.payRate = payRate;
+      this.annualSalary = 0;
+    }
+  }
+  
+  // PartTime Class
+  class PartTime extends Employee {
+    constructor(name, age, payRate, hours) {
+      super(name, age, payRate);
+      this.hours = hours;
+      this.employeeType = "Part Time";
+      this.calculatePay();
+    }
+  
+    calculatePay() {
+      this.annualSalary = this.hours * this.payRate * 52;
+    }
+  
+    displayInfo() {
+      return `${this.name}\t${this.age}\t${this.annualSalary}\t${this.hours}\t${this.payRate}\t${this.employeeType}`;
+    }
+    // Additional method to edit pay rate for Part Timer
+    editPayRate(newPayRate) {
+      this.payRate = newPayRate;
+      this.calculatePay();
+    }
+  }
+  
+  // Manager Class
+  class Manager extends Employee {
+    constructor(name, age, payRate, hours = 40) {
+      super(name, age, payRate);
+      this.hours = hours;
+      this.employeeType = "Manager";
+      this.calculatePay();
+    }
+  
+    calculatePay() {
+      this.annualSalary = this.hours * this.payRate * 52 - 1000;
+    }
+  
+    displayInfo() {
+      return `${this.name}\t${this.age}\t${this.annualSalary}\t${this.hours}\t${this.payRate}\t${this.employeeType}`;
+    }
+  
+    // Additional method to edit pay rate for Manager
+    editPayRate(newPayRate) {
+      this.payRate = newPayRate;
+      this.calculatePay();
+    }
+  }
+  
+  // IIFE to instantiate the Main class
+  (function () {
+    const main = new Main();
+    main.displayEmployees(); // Display initial employees
+    let exitFlag = false;
+  
+    while (!exitFlag) {
+      main.displayMenu();
+      const choice = prompt(
+        "Main Menu \n 1. Add Employee \n 2. Remove Employee \n 3. Edit Employee \n 4. Display Employees \n \n Enter your choice (1-4), or press Cancel / type exit to quit:"
+      );
+  
+      if (choice == -null) {
+        console.log("Exiting the program. Goodbye!");
+        break;
+      }
+  
+      switch (choice) {
+        case "1":
+          main.addEmployee();
+          break;
+        case "2":
+          main.removeEmployee();
+          break;
+        case "3":
+          main.editEmployee();
+          break;
+        case "4":
+          main.displayEmployees();
+          break;
+        case "exit":
+          exitFlag = true;
+          console.log("Exiting the program. Goodbye!");
+          break;
+        default:
+          console.log("Invalid choice. Please enter a number between 1 and 4.");
+      }
+    }
+  })();
